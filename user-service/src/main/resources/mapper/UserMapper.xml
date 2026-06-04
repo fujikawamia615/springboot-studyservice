@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hdd.user_service.mapper.UserMapper">
+    <select id="selectAll" resultType="com.hdd.user_service.entity.User">
+        SELECT * FROM t_user
+    </select>
+    <select id="selectById" resultType="com.hdd.user_service.entity.User">
+        SELECT * FROM t_user WHERE user_id = #{id}
+    </select>
+    <select id="selectByUsername" resultType="com.hdd.user_service.entity.User">
+        SELECT * FROM t_user WHERE username = #{username}
+    </select>
+    <insert id="insert" parameterType="com.hdd.user_service.entity.User" useGeneratedKeys="true"
+        keyProperty="userId" keyColumn="user_id">
+        INSERT INTO t_user(username,password,role,reference_id) VALUES(#{username},#{password},#{role},#{referenceId})
+    </insert>
+    <update id="update" parameterType="com.hdd.user_service.entity.User">
+        UPDATE t_user SET username = #{username},password = #{password},role = #{role},reference_id = #{referenceId}
+        WHERE user_id = #{userId}
+    </update>
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM t_user WHERE user_id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hdd.studysys.mapper.CourseMapper">
+    <select id="selectAll" resultType="com.hdd.studysys.entity.Course"> select * from t_course </select>
+    <select id="selectById" resultType="com.hdd.studysys.entity.Course"> SELECT * FROM t_course
+        WHERE course_id = #{id} </select>
+    <insert id="insert" parameterType="com.hdd.studysys.entity.Course"> INSERT INTO
+        t_course(course_id,course_name,teacher_id) VALUES(#{courseId},#{courseName},#{teacherId}) </insert>
+    <update id="update" parameterType="com.hdd.studysys.entity.Course"> UPDATE t_course SET
+        course_name = #{courseName},teacher_id = #{teacherId} WHERE course_id = #{courseId} </update>
+    <delete id="deleteById" parameterType="int"> DELETE FROM t_course WHERE course_id = #{id} </delete>
+    <select id="search" resultType="com.hdd.studysys.entity.Course"> select * from t_course <where>
+            <if test="courseName != null and courseName != ''"> and course_name like '%' ||
+        #{courseName} || '%' </if>
+    <if test="teacherId != null"> and teacher_id = #{teacherId} </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hdd.studysys.mapper.DepartmentMapper">
+    <select id="selectAll" resultType="com.hdd.studysys.entity.Department"> select * from
+        t_department </select>
+    <select id="selectById" resultType="com.hdd.studysys.entity.Department"> SELECT * FROM
+        t_department WHERE department_id = #{id} </select>
+    <insert id="insert" parameterType="com.hdd.studysys.entity.Department"> INSERT INTO
+        t_department(department_id,department_name) VALUES(#{departmentId},#{departmentName}) </insert>
+    <insert id="batchInsert"> INSERT ALL <foreach collection="list" item="item"> INTO
+        t_department(department_id, department_name) VALUES (#{item.departmentId},
+        #{item.departmentName}) </foreach> SELECT * FROM dual </insert>
+    <update id="update" parameterType="com.hdd.studysys.entity.Department"> UPDATE t_department SET
+        department_name = #{departmentName} WHERE department_id = #{departmentId} </update>
+    <delete id="deleteById" parameterType="int"> DELETE FROM t_department WHERE department_id =
+        #{id} </delete>
+    <select id="search" resultType="com.hdd.studysys.entity.Department"> SELECT * FROM t_department <where>
+            <if test="departmentName != null and departmentName != ''"> and department_name like '%'
+        || #{departmentName} || '%' </if>
+        </where>
+    </select>
+</mapper>
