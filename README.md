@@ -17,19 +17,12 @@ D:\springboot\
 | 技术 | 版本 | 用途 |
 |------|------|------|
 | Spring Boot | 4.0.6 | 微服务基础框架 |
-| Spring Cloud | 2025.1.1 | 微服务治理 |
 | Spring Cloud Gateway | 5.0.1 (WebFlux) | API 网关 |
-| Spring Security | 随 Boot 4.x | 用户认证授权 |
 | MyBatis | 4.0.1 | ORM 持久层 |
 | Oracle 21c XE (Docker) | 21-full | 数据库 |
 | Redis 7 (Docker) | 7-alpine | 缓存 |
 | Kafka 7.7.2 (Docker) | cp-kafka | 消息队列 |
 | Nacos 2.3.2 (Docker) | v2.3.2 | 服务注册与发现 |
-| JJWT | 0.12.6 | JWT 令牌 |
-| PageHelper | 2.1.0 | 分页 |
-| SpringDoc OpenAPI | 2.8.4 | 接口文档 |
-| Spring Cloud LoadBalancer | - | 客户端负载均衡 |
-| Nacos Discovery | 2025.1.0.0 | 服务发现 |
 
 ## 快速启动
 
