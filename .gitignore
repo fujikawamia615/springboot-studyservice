@@ -11,6 +11,9 @@ target/
 ### HTTP 测试文件 ###
 **/test*.http
 
+### 配置文件（含密码，不上传） ###
+**/application.properties
+
 ### STS ###
 .apt_generated
 .classpath
