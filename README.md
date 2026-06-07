@@ -200,10 +200,6 @@ graph TD
     Kafka --> Log["log-service :8083<br/>登录日志消费"]
 ```
 
-## 测试文件
-
-`test.http` 文件包含了完整的 API 测试用例，涵盖注册、登录、选课、角色权限验证等场景。
-
 ## 开发环境
 
 - IDE: VS Code
