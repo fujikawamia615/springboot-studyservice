@@ -21,7 +21,7 @@ Content-Type: application/json
 
 ### 3. 通过 Gateway 访问 studysys 的 API（带 Token，应返回 200）
 GET http://localhost:8082/api/student
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3Iiwicm9sZSI6InN0dWRlbnQiLCJpYXQiOjE3ODA1NzAzMjgsImV4cCI6MTc4MTE3NTEyOH0.je5nonqXcezo7pjr18aoLW0eDsO5p4yRtVDpw3OR_F0
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3Iiwicm9sZSI6InN0dWRlbnQiLCJpYXQiOjE3ODA3NjgyODgsImV4cCI6MTc4MTM3MzA4OH0.xOvq7noNFCMiNf5E7oCaDsW7vWoSRn9DhBH9yJbPXIE
 
 ### 4. 通过 Gateway 访问 studysys 的 API（不带 Token，应返回 401）
 GET http://localhost:8082/api/student

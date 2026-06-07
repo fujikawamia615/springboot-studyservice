@@ -12,9 +12,9 @@ public class GatewayConfig {
         public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
                 return builder.routes()
                                 .route("user-service", r -> r.path("/api/user/**")
-                                                .uri("lb://user-service"))
+                                                .uri("http://localhost:8081"))
                                 .route("studysys", r -> r.path("/api/**")
-                                                .uri("lb://studysys"))
+                                                .uri("http://localhost:8080"))
                                 .build();
         }
 }
