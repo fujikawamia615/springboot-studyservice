@@ -193,9 +193,9 @@ graph TD
     Gateway --> Auth["user-service :8081<br/>注册/登录/JWT"]
     Gateway --> Business["studysys :8080<br/>教务CRUD + 选课"]
     
-    Auth --> Kafka[("Kafka<br/>103.236.71.253:60150")]
-    Business --> Redis[("Redis<br/>103.236.71.253:60252")]
-    Business --> Oracle[("Oracle 21c<br/>103.236.71.253:60057")]
+    Auth --> Kafka[("Kafka")]
+    Business --> Redis[("Redis")]
+    Business --> Oracle[("Oracle 21c")]
     Auth --> Oracle
     Kafka --> Log["log-service :8083<br/>登录日志消费"]
 ```
