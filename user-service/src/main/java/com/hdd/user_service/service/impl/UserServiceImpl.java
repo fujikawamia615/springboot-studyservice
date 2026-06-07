@@ -11,7 +11,7 @@ import com.hdd.user_service.mapper.UserMapper;
 import com.hdd.user_service.service.KafkaProducerService;
 import com.hdd.user_service.service.UserService;
 import com.hdd.user_service.util.JwtUtil;
-
+import org.springframework.web.client.RestTemplate;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
@@ -22,6 +22,8 @@ public class UserServiceImpl implements UserService {
     private KafkaProducerService kafkaProducerService;
     @Autowired
     private JwtUtil jwtUtil;
+    private final RestTemplate restTemplate = new RestTemplate();
+
     @Override
     public PageInfo<User> selectAll(Integer page, Integer size) {
         PageHelper.startPage(page, size);
@@ -50,6 +52,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int register(User user) {
+        if (userMapper.selectByUsername(user.getUsername()) != null) {
+            throw new RuntimeException("用户名已存在");
+        }
+        if ("teacher".equals(user.getRole())) {
+            if (user.getReferenceId() == null) {
+                throw new RuntimeException("教师ID不能为空");
+            }
+            String url = "http://localhost:8080/api/teacher/" + user.getReferenceId();
+            if (restTemplate.getForObject(url, Object.class) == null) {
+                throw new RuntimeException("教师ID不存在");
+            }
+        } else if ("student".equals(user.getRole())) {
+            if (user.getReferenceId() == null) {
+                throw new RuntimeException("学生ID不能为空");
+            }
+            String url = "http://localhost:8080/api/student/" + user.getReferenceId();
+            if (restTemplate.getForObject(url, Object.class) == null) {
+                throw new RuntimeException("学生ID不存在");
+            }
+        } else {
+            throw new RuntimeException("只允许注册教师或学生账户");
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userMapper.insert(user);
     }
