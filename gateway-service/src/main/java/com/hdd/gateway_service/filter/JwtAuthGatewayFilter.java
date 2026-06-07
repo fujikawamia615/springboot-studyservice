@@ -54,9 +54,47 @@ public class JwtAuthGatewayFilter implements GlobalFilter, Ordered {
         }
 
         Claims claims = jwtUtil.parse(token);
+        String role = claims.get("role", String.class);
+        String method = request.getMethod().name();
+
+        // ========== 角色权限检查 ==========
+        if (!"ADMIN".equals(role)) {
+            // 1. 用户管理接口 → 仅 ADMIN
+            if (path.startsWith("/api/user/")) {
+                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                return exchange.getResponse().setComplete();
+            }
+
+            if ("student".equals(role)) {
+                // 学生：只读 + 选课/退选
+                if (path.startsWith("/api/enrollment")) {
+                    if (path.startsWith("/api/enrollment/my/") && "GET".equals(method)) {
+                        // 允许
+                    } else if (!path.equals("/api/enrollment/enroll") && !path.equals("/api/enrollment/drop")) {
+                        exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                        return exchange.getResponse().setComplete();
+                    }
+                } else if (!"GET".equals(method)) {
+                    exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                    return exchange.getResponse().setComplete();
+                }
+            } else if ("teacher".equals(role)) {
+                // 教师可以管理成绩表
+                if (path.startsWith("/api/grade") && "GET".equals(method)) {
+                    // 允许查询
+                } else if (path.startsWith("/api/grade")) {
+                    // 允许教师增删改成绩
+                } else if (!"GET".equals(method)) {
+                    // 其他接口只读
+                    exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                    return exchange.getResponse().setComplete();
+                }
+            }
+        }
+
         ServerHttpRequest modifiedRequest = request.mutate()
                 .header("userId", claims.getSubject())
-                .header("role", claims.get("role", String.class))
+                .header("role", role)
                 .build();
 
         return chain.filter(exchange.mutate().request(modifiedRequest).build());
