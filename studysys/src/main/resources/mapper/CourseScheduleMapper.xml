@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hdd.studysys.mapper.CourseScheduleMapper">
+    <select id="selectAll" resultType="com.hdd.studysys.entity.CourseSchedule"> SELECT * FROM
+        t_course_schedule </select>
+    <select id="selectById" resultType="com.hdd.studysys.entity.CourseSchedule"> SELECT * FROM
+        t_course_schedule WHERE schedule_id = #{scheduleId} </select>
+    <insert id="insert" parameterType="com.hdd.studysys.entity.CourseSchedule"> INSERT INTO t_course_schedule(course_id,
+        teacher_id, day_of_week, start_period, end_period, capacity, enrolled_count)
+        VALUES(#{courseId}, #{teacherId}, #{dayOfWeek}, #{startPeriod}, #{endPeriod}, #{capacity},
+        #{enrolledCount}) </insert>
+    <update id="update" parameterType="com.hdd.studysys.entity.CourseSchedule"> UPDATE
+        t_course_schedule SET course_id = #{courseId}, teacher_id = #{teacherId}, day_of_week =
+        #{dayOfWeek}, start_period = #{startPeriod}, end_period = #{endPeriod}, capacity =
+        #{capacity} WHERE schedule_id = #{scheduleId} </update>
+    <delete id="deleteById"> DELETE FROM t_course_schedule WHERE schedule_id = #{scheduleId} </delete>
+    <update id="updateEnrolledCount"> UPDATE t_course_schedule SET enrolled_count = enrolled_count +
+        #{delta} WHERE schedule_id = #{scheduleId} </update>
+</mapper>

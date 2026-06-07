@@ -4,8 +4,7 @@
     <select id="selectAll" resultType="com.hdd.studysys.entity.Grade"> SELECT * FROM t_grade </select>
     <select id="selectById" resultType="com.hdd.studysys.entity.Grade"> SELECT * FROM t_grade WHERE
         grade_id = #{id} </select>
-    <insert id="insert" parameterType="com.hdd.studysys.entity.Grade" useGeneratedKeys="true"
-        keyProperty="gradeId" keyColumn="grade_id"> INSERT INTO t_grade(student_id,course_id,grade)
+    <insert id="insert" parameterType="com.hdd.studysys.entity.Grade"> INSERT INTO t_grade(student_id,course_id,grade)
         VALUES(#{studentId},#{courseId},#{grade}) </insert>
     <update id="update" parameterType="com.hdd.studysys.entity.Grade"> UPDATE t_grade SET student_id
         = #{studentId},course_id = #{courseId},grade = #{grade} WHERE grade_id = #{gradeId} </update>

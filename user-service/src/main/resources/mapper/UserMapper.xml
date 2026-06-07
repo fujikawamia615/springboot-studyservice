@@ -10,8 +10,7 @@
     <select id="selectByUsername" resultType="com.hdd.user_service.entity.User">
         SELECT * FROM t_user WHERE username = #{username}
     </select>
-    <insert id="insert" parameterType="com.hdd.user_service.entity.User" useGeneratedKeys="true"
-        keyProperty="userId" keyColumn="user_id">
+    <insert id="insert" parameterType="com.hdd.user_service.entity.User">
         INSERT INTO t_user(username,password,role,reference_id) VALUES(#{username},#{password},#{role},#{referenceId})
     </insert>
     <update id="update" parameterType="com.hdd.user_service.entity.User">

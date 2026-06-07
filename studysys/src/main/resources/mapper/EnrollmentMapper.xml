@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hdd.studysys.mapper.EnrollmentMapper">
+    <insert id="insert" parameterType="com.hdd.studysys.entity.Enrollment"> INSERT INTO t_enrollment(schedule_id,
+        student_id, enroll_time, status) VALUES(#{scheduleId}, #{studentId}, SYSDATE, #{status}) </insert>
+    <update id="updateStatus"> UPDATE t_enrollment SET status = #{status} WHERE enrollment_id =
+        #{enrollmentId} </update>
+    <select id="selectById" resultType="com.hdd.studysys.entity.Enrollment"> SELECT * FROM
+        t_enrollment WHERE enrollment_id = #{enrollmentId} </select>
+    <select id="selectByStudentAndSchedule" resultType="com.hdd.studysys.entity.Enrollment"> SELECT
+        * FROM t_enrollment WHERE student_id = #{studentId} AND schedule_id = #{scheduleId} </select>
+    <select id="selectByStudentId" resultType="com.hdd.studysys.dto.EnrollmentDTO"> SELECT
+        e.enrollment_id, s.student_name, c.course_name, t.teacher_name, cs.day_of_week,
+        cs.start_period, cs.end_period, e.enroll_time, e.status FROM t_enrollment e JOIN t_student s
+        ON e.student_id = s.student_id JOIN t_course_schedule cs ON e.schedule_id = cs.schedule_id
+        JOIN t_course c ON cs.course_id = c.course_id JOIN t_teacher t ON cs.teacher_id =
+        t.teacher_id WHERE e.student_id = #{studentId} ORDER BY e.enroll_time DESC </select>
+    <select id="selectByScheduleId" resultType="com.hdd.studysys.dto.EnrollmentDTO"> SELECT
+        e.enrollment_id, s.student_name, c.course_name, t.teacher_name, cs.day_of_week,
+        cs.start_period, cs.end_period, e.enroll_time, e.status FROM t_enrollment e JOIN t_student s
+        ON e.student_id = s.student_id JOIN t_course_schedule cs ON e.schedule_id = cs.schedule_id
+        JOIN t_course c ON cs.course_id = c.course_id JOIN t_teacher t ON cs.teacher_id =
+        t.teacher_id WHERE e.schedule_id = #{scheduleId} AND e.status = 'ENROLLED' ORDER BY
+        e.enroll_time </select>
+    <select id="selectTimeConflict" resultType="com.hdd.studysys.dto.EnrollmentDTO"> SELECT
+        c.course_name, cs.day_of_week, cs.start_period, cs.end_period FROM t_enrollment e JOIN
+        t_course_schedule cs ON e.schedule_id = cs.schedule_id JOIN t_course c ON cs.course_id =
+        c.course_id WHERE e.student_id = #{studentId} AND e.status = 'ENROLLED' AND cs.day_of_week =
+        #{dayOfWeek} AND cs.start_period &lt; #{endPeriod} AND cs.end_period &gt; #{startPeriod} </select>
+</mapper>
