@@ -89,6 +89,6 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("密码错误");
         }
         kafkaProducerService.sendLoginEvent(user.getUserId(), user.getUsername());
-        return jwtUtil.generateToken(user.getUserId(), user.getRole());
+        return jwtUtil.generateToken(user.getUserId(), user.getRole(),user.getReferenceId());
     }
 }

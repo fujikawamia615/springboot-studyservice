@@ -15,7 +15,7 @@ import com.hdd.studysys.dto.EnrollmentDTO;
 import com.hdd.studysys.service.EnrollmentService;
 
 import io.swagger.v3.oas.annotations.Operation;
-
+import org.springframework.web.bind.annotation.RequestHeader;
 @RestController
 @RequestMapping("/api/enrollment")
 public class EnrollmentController {
@@ -24,7 +24,8 @@ public class EnrollmentController {
 
     @PostMapping("/enroll")
     @Operation(summary = "学生选课", description = "检查重复、容量、时间冲突后选课")
-    public Map<String, Object> enroll(@RequestParam Integer studentId,
+    public Map<String, Object> enroll(
+            @RequestHeader("referenceId") Integer studentId,
             @RequestParam Integer scheduleId) {
         return enrollmentService.enroll(studentId, scheduleId);
     }
@@ -35,15 +36,16 @@ public class EnrollmentController {
         return enrollmentService.drop(enrollmentId);
     }
 
-    @GetMapping("/my/{studentId}")
+    @GetMapping("/my")
     @Operation(summary = "查看我的选课列表")
-    public List<EnrollmentDTO> myEnrollments(@PathVariable Integer studentId) {
+    public List<EnrollmentDTO> myEnrollments(@RequestHeader("referenceId") Integer studentId) {
         return enrollmentService.myEnrollments(studentId);
     }
 
     @GetMapping("/schedule/{scheduleId}")
-    @Operation(summary = "查看某一课程的选课名单")
-    public List<EnrollmentDTO> scheduleEnrollments(@PathVariable Integer scheduleId) {
-        return enrollmentService.scheduleEnrollments(scheduleId);
+    public List<EnrollmentDTO> scheduleEnrollments(@PathVariable Integer scheduleId,
+            @RequestHeader(value = "role", required = false) String role,
+            @RequestHeader(value = "referenceId", required = false) Integer referenceId) {
+        return enrollmentService.scheduleEnrollmentsWithCheck(scheduleId, role, referenceId);
     }
 }

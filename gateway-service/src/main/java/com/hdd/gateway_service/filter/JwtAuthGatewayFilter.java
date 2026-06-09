@@ -55,6 +55,7 @@ public class JwtAuthGatewayFilter implements GlobalFilter, Ordered {
 
         Claims claims = jwtUtil.parse(token);
         String role = claims.get("role", String.class);
+        Integer referenceId = claims.get("referenceId", Integer.class);
         String method = request.getMethod().name();
 
         // ========== 角色权限检查 ==========
@@ -64,28 +65,39 @@ public class JwtAuthGatewayFilter implements GlobalFilter, Ordered {
                 exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
             }
-
             if ("student".equals(role)) {
-                // 学生：只读 + 选课/退选
-                if (path.startsWith("/api/enrollment")) {
-                    if (path.startsWith("/api/enrollment/my/") && "GET".equals(method)) {
-                        // 允许
-                    } else if (!path.equals("/api/enrollment/enroll") && !path.equals("/api/enrollment/drop")) {
-                        exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-                        return exchange.getResponse().setComplete();
-                    }
-                } else if (!"GET".equals(method)) {
+                // 学生：仅允许选课、看课表、看自己信息
+                if ("GET".equals(method) && path.equals("/api/course-schedule")) {
+                    // 允许查看课程安排
+                } else if (path.equals("/api/enrollment/enroll") && "POST".equals(method)) {
+                    // 允许选课
+                } else if (path.equals("/api/enrollment/drop") && "POST".equals(method)) {
+                    // 允许退选
+                } else if (path.startsWith("/api/enrollment/my") && "GET".equals(method)) {
+                    // 允许查看自己的选课
+                } else if (path.startsWith("/api/student/") && "GET".equals(method)) {
+                    // 允许查看个人信息（服务层会校验是否自己）
+                } else if (path.startsWith("/api/grade/my") && "GET".equals(method)) {
+                    // 允许查看自己的成绩
+                } else {
+                    // 未明确允许的接口全部禁止
                     exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                     return exchange.getResponse().setComplete();
                 }
-            } else if ("teacher".equals(role)) {
-                // 教师可以管理成绩表
-                if (path.startsWith("/api/grade") && "GET".equals(method)) {
-                    // 允许查询
+            }else if ("teacher".equals(role)) {
+                // 教师：允许查看自己教的课程的选课名单
+                if (path.startsWith("/api/enrollment/schedule/") && "GET".equals(method)) {
+                    // 允许（服务层会校验是否自己的课）
+                } else if (path.equals("/api/course-schedule") && "GET".equals(method)) {
+                    // 允许查看课程安排（服务层按 teacher_id 过滤）
+                } else if (path.startsWith("/api/teacher/") && "GET".equals(method)) {
+                    // 允许查看个人信息（服务层会校验是否自己）
+                } else if (path.startsWith("/api/grade") && "GET".equals(method)) {
+                    // 允许查询成绩
                 } else if (path.startsWith("/api/grade")) {
                     // 允许教师增删改成绩
-                } else if (!"GET".equals(method)) {
-                    // 其他接口只读
+                } else{
+                    // 未明确允许的接口全部禁止
                     exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                     return exchange.getResponse().setComplete();
                 }
@@ -95,6 +107,7 @@ public class JwtAuthGatewayFilter implements GlobalFilter, Ordered {
         ServerHttpRequest modifiedRequest = request.mutate()
                 .header("userId", claims.getSubject())
                 .header("role", role)
+                .header("referenceId", referenceId != null ? referenceId.toString() : "")
                 .build();
 
         return chain.filter(exchange.mutate().request(modifiedRequest).build());

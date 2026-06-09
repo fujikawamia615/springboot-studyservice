@@ -14,14 +14,15 @@
         cs.start_period, cs.end_period, e.enroll_time, e.status FROM t_enrollment e JOIN t_student s
         ON e.student_id = s.student_id JOIN t_course_schedule cs ON e.schedule_id = cs.schedule_id
         JOIN t_course c ON cs.course_id = c.course_id JOIN t_teacher t ON cs.teacher_id =
-        t.teacher_id WHERE e.student_id = #{studentId} ORDER BY e.enroll_time DESC </select>
+        t.teacher_id WHERE e.student_id = #{studentId} AND e.status = 'ENROLLED'ORDER BY
+        e.enroll_time DESC </select>
     <select id="selectByScheduleId" resultType="com.hdd.studysys.dto.EnrollmentDTO"> SELECT
         e.enrollment_id, s.student_name, c.course_name, t.teacher_name, cs.day_of_week,
         cs.start_period, cs.end_period, e.enroll_time, e.status FROM t_enrollment e JOIN t_student s
         ON e.student_id = s.student_id JOIN t_course_schedule cs ON e.schedule_id = cs.schedule_id
         JOIN t_course c ON cs.course_id = c.course_id JOIN t_teacher t ON cs.teacher_id =
         t.teacher_id WHERE e.schedule_id = #{scheduleId} AND e.status = 'ENROLLED' ORDER BY
-        e.enroll_time </select>
+        e.enroll_time DESC</select>
     <select id="selectTimeConflict" resultType="com.hdd.studysys.dto.EnrollmentDTO"> SELECT
         c.course_name, cs.day_of_week, cs.start_period, cs.end_period FROM t_enrollment e JOIN
         t_course_schedule cs ON e.schedule_id = cs.schedule_id JOIN t_course c ON cs.course_id =

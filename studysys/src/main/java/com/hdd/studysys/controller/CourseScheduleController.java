@@ -16,7 +16,7 @@ import com.hdd.studysys.entity.CourseSchedule;
 import com.hdd.studysys.service.CourseScheduleService;
 
 import io.swagger.v3.oas.annotations.Operation;
-
+import org.springframework.web.bind.annotation.RequestHeader;
 @RestController
 @RequestMapping("/api/course-schedule")
 public class CourseScheduleController {
@@ -25,8 +25,13 @@ public class CourseScheduleController {
 
     @GetMapping("")
     @Operation(summary = "查询所有课程安排")
-    public List<CourseSchedule> selectAll() {
-        return courseScheduleService.selectAll();
+    public List<?> selectAll(
+            @RequestHeader(value = "role", required = false) String role,
+            @RequestHeader(value = "referenceId", required = false) Integer referenceId) {
+        if ("teacher".equals(role)) {
+            return courseScheduleService.selectByTeacherId(referenceId);
+        }
+        return courseScheduleService.selectAllWithNames();
     }
 
     @GetMapping("/{id}")

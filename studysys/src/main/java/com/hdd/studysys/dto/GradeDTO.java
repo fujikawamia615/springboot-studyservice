@@ -1,12 +1,11 @@
-package com.hdd.studysys.entity;
+package com.hdd.studysys.dto;
 
-import java.io.Serializable;
-
-public class Grade implements Serializable {
+public class GradeDTO {
     private Integer gradeId;
     private Integer studentId;
     private Integer scheduleId;
     private Integer grade;
+    private String courseName;
 
     public Integer getGradeId() {
         return gradeId;
@@ -38,5 +37,13 @@ public class Grade implements Serializable {
 
     public void setGrade(Integer grade) {
         this.grade = grade;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 }

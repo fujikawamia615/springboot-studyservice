@@ -5,6 +5,8 @@
         t_course_schedule </select>
     <select id="selectById" resultType="com.hdd.studysys.entity.CourseSchedule"> SELECT * FROM
         t_course_schedule WHERE schedule_id = #{scheduleId} </select>
+    <select id="selectByIdForUpdate" resultType="com.hdd.studysys.entity.CourseSchedule"> SELECT *
+    FROM t_course_schedule WHERE schedule_id = #{scheduleId} FOR UPDATE </select>
     <insert id="insert" parameterType="com.hdd.studysys.entity.CourseSchedule"> INSERT INTO t_course_schedule(course_id,
         teacher_id, day_of_week, start_period, end_period, capacity, enrolled_count)
         VALUES(#{courseId}, #{teacherId}, #{dayOfWeek}, #{startPeriod}, #{endPeriod}, #{capacity},
@@ -16,4 +18,26 @@
     <delete id="deleteById"> DELETE FROM t_course_schedule WHERE schedule_id = #{scheduleId} </delete>
     <update id="updateEnrolledCount"> UPDATE t_course_schedule SET enrolled_count = enrolled_count +
         #{delta} WHERE schedule_id = #{scheduleId} </update>
+    <resultMap id="CourseScheduleDTOResultMap" type="com.hdd.studysys.dto.CourseScheduleDTO">
+        <result property="scheduleId" column="schedule_id" />
+        <result property="courseId" column="course_id" />
+        <result property="courseName" column="course_name" />
+        <result property="teacherId" column="teacher_id" />
+        <result property="teacherName" column="teacher_name" />
+        <result property="dayOfWeek" column="day_of_week" />
+        <result property="startPeriod" column="start_period" />
+        <result property="endPeriod" column="end_period" />
+        <result property="capacity" column="capacity" />
+        <result property="enrolledCount" column="enrolled_count" />
+    </resultMap>
+
+    <select id="selectAllWithNames" resultMap="CourseScheduleDTOResultMap"> SELECT cs.*,
+        c.course_name, t.teacher_name AS teacher_name FROM t_course_schedule cs JOIN t_course c ON
+        cs.course_id = c.course_id JOIN t_teacher t ON cs.teacher_id = t.teacher_id ORDER BY cs.day_of_week,
+        cs.start_period </select>
+
+    <select id="selectByTeacherId" resultMap="CourseScheduleDTOResultMap"> SELECT cs.*,
+        c.course_name, t.teacher_name AS teacher_name FROM t_course_schedule cs JOIN t_course c ON
+        cs.course_id = c.course_id JOIN t_teacher t ON cs.teacher_id = t.teacher_id WHERE cs.teacher_id =
+        #{teacherId} ORDER BY cs.day_of_week, cs.start_period </select>
 </mapper>

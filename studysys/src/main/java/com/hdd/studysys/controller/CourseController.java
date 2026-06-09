@@ -60,5 +60,4 @@ public class CourseController {
             @RequestParam(required = false) Integer teacherId) {
         return courseService.search(courseName, teacherId);
     }
-
 }

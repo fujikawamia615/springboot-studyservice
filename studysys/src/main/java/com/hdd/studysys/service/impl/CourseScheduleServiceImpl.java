@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import com.hdd.studysys.entity.CourseSchedule;
 import com.hdd.studysys.mapper.CourseScheduleMapper;
 import com.hdd.studysys.service.CourseScheduleService;
-
+import com.hdd.studysys.dto.CourseScheduleDTO;
 @Service
 public class CourseScheduleServiceImpl implements CourseScheduleService {
     @Autowired
@@ -35,5 +35,15 @@ public class CourseScheduleServiceImpl implements CourseScheduleService {
     @Override
     public int deleteById(Integer scheduleId) {
         return courseScheduleMapper.deleteById(scheduleId);
+    }
+
+    @Override
+    public List<CourseScheduleDTO> selectAllWithNames() {
+        return courseScheduleMapper.selectAllWithNames();
+    }
+
+    @Override
+    public List<CourseScheduleDTO> selectByTeacherId(Integer teacherId) {
+        return courseScheduleMapper.selectByTeacherId(teacherId);
     }
 }

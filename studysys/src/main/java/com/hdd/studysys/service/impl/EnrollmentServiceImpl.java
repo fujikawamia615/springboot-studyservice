@@ -13,6 +13,7 @@ import com.hdd.studysys.entity.Enrollment;
 import com.hdd.studysys.mapper.CourseScheduleMapper;
 import com.hdd.studysys.mapper.EnrollmentMapper;
 import com.hdd.studysys.service.EnrollmentService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EnrollmentServiceImpl implements EnrollmentService {
@@ -22,10 +23,11 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     private CourseScheduleMapper courseScheduleMapper;
 
     @Override
+    @Transactional
     public Map<String, Object> enroll(Integer studentId, Integer scheduleId) {
         Map<String, Object> result = new HashMap<>();
 
-        CourseSchedule schedule = courseScheduleMapper.selectById(scheduleId);
+        CourseSchedule schedule = courseScheduleMapper.selectByIdForUpdate(scheduleId);
         if (schedule == null) {
             result.put("success", false);
             result.put("message", "课程安排不存在");
@@ -67,6 +69,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> drop(Integer enrollmentId) {
         Map<String, Object> result = new HashMap<>();
         Enrollment enrollment = enrollmentMapper.selectById(enrollmentId);
@@ -89,6 +92,18 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Override
     public List<EnrollmentDTO> scheduleEnrollments(Integer scheduleId) {
+        return enrollmentMapper.selectByScheduleId(scheduleId);
+    }
+
+    @Override
+    public List<EnrollmentDTO> scheduleEnrollmentsWithCheck(Integer scheduleId, String role, Integer referenceId) {
+        if ("teacher".equals(role)) {
+            CourseSchedule schedule = courseScheduleMapper.selectById(scheduleId);
+            if (schedule == null)
+                throw new RuntimeException("课程安排不存在");
+            if (!schedule.getTeacherId().equals(referenceId))
+                throw new RuntimeException("只能查看自己教的课的选课名单");
+        }
         return enrollmentMapper.selectByScheduleId(scheduleId);
     }
 }

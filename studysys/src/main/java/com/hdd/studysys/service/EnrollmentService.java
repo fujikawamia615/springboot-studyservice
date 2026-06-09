@@ -12,4 +12,6 @@ public interface EnrollmentService {
     List<EnrollmentDTO> myEnrollments(Integer studentId);
 
     List<EnrollmentDTO> scheduleEnrollments(Integer scheduleId);
+
+    List<EnrollmentDTO> scheduleEnrollmentsWithCheck(Integer scheduleId, String role, Integer referenceId);
 }

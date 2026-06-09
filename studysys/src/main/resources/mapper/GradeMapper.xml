@@ -4,15 +4,34 @@
     <select id="selectAll" resultType="com.hdd.studysys.entity.Grade"> SELECT * FROM t_grade </select>
     <select id="selectById" resultType="com.hdd.studysys.entity.Grade"> SELECT * FROM t_grade WHERE
         grade_id = #{id} </select>
-    <insert id="insert" parameterType="com.hdd.studysys.entity.Grade"> INSERT INTO t_grade(student_id,course_id,grade)
-        VALUES(#{studentId},#{courseId},#{grade}) </insert>
+    <insert id="insert" parameterType="com.hdd.studysys.entity.Grade"> INSERT INTO
+        t_grade(student_id,schedule_id,grade)
+        VALUES(#{studentId},#{scheduleId},#{grade}) </insert>
     <update id="update" parameterType="com.hdd.studysys.entity.Grade"> UPDATE t_grade SET student_id
-        = #{studentId},course_id = #{courseId},grade = #{grade} WHERE grade_id = #{gradeId} </update>
+        = #{studentId},schedule_id = #{scheduleId},grade = #{grade} WHERE grade_id = #{gradeId} </update>
     <delete id="deleteById" parameterType="int"> DELETE FROM t_grade WHERE grade_id = #{id} </delete>
     <select id="search" resultType="com.hdd.studysys.entity.Grade"> SELECT * FROM t_grade <where>
             <if test="studentId != null"> and student_id = #{studentId} </if>
-            <if test="courseId != null"> and course_id = #{courseId} </if>
+            <if test="scheduleId != null"> and schedule_id = #{scheduleId} </if>
             <if test="grade != null"> and grade = #{grade} </if>
         </where>
     </select>
+    <select id="selectByStudentId" resultType="com.hdd.studysys.entity.Grade"> SELECT * FROM t_grade
+        WHERE student_id = #{studentId} </select>
+
+    <select id="selectByScheduleId" resultType="com.hdd.studysys.entity.Grade"> SELECT * FROM
+        t_grade WHERE schedule_id = #{scheduleId} </select>
+
+    <select id="selectByScheduleIdForTeacher" resultType="com.hdd.studysys.entity.Grade"> SELECT g.*
+        FROM t_grade g JOIN t_course_schedule cs ON g.schedule_id = cs.schedule_id WHERE
+        g.schedule_id = #{scheduleId} AND cs.teacher_id = #{teacherId} </select>
+
+    <select id="countScheduleByTeacher" resultType="int"> SELECT COUNT(*) FROM t_course_schedule
+        WHERE schedule_id = #{scheduleId} AND teacher_id = #{teacherId} </select>
+
+    <delete id="deleteByIdWithTeacherCheck"> DELETE FROM t_grade WHERE grade_id = #{gradeId} AND
+    schedule_id IN ( SELECT schedule_id FROM t_course_schedule WHERE teacher_id = #{teacherId} ) </delete>
+    <select id="selectByStudentIdWithCourseName" resultType="com.hdd.studysys.dto.GradeDTO"> SELECT
+    g.*, c.course_name AS courseName FROM t_grade g JOIN t_course_schedule cs ON g.schedule_id =
+    cs.schedule_id JOIN t_course c ON cs.course_id = c.course_id WHERE g.student_id = #{studentId} </select>
 </mapper>
