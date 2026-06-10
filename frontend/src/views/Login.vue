@@ -14,6 +14,9 @@
         </el-form-item>
       </el-form>
       <p v-if="error" style="color:#f56c6c;text-align:center">{{ error }}</p>
+      <p style="text-align:center;margin-top:10px">
+        没有账号？<router-link to="/register">去注册</router-link>
+      </p>
     </el-card>
   </div>
 </template>

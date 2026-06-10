@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from './views/Login.vue'
+import Register from './views/Register.vue'
 import DepartmentPage from './views/DepartmentPage.vue'
 import StudentPage from './views/StudentPage.vue'
 import TeacherPage from './views/TeacherPage.vue'
@@ -14,6 +15,7 @@ import EnrollmentList from './views/EnrollmentList.vue'
 const routes = [
     { path: '/', redirect: '/login' },
     { path: '/login', component: Login },
+    { path: '/register', component: Register },
     // 管理员管理页
     { path: '/departments', component: DepartmentPage, meta: { roles: ['admin'] } },
     { path: '/students', component: StudentPage, meta: { roles: ['admin'] } },
@@ -37,11 +39,14 @@ function getRole() {
     } catch { return null }
 }
 
+const PUBLIC_PATHS = ['/login', '/register']
+
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token')
+    // 公开页面（登录、注册）→ 直接放行
+    if (PUBLIC_PATHS.includes(to.path)) return next()
     // 未登录 → 登录页
-    if (!token && to.path !== '/login') return next('/login')
-    if (to.path === '/login') return next()
+    if (!token) return next('/login')
 
     // 检查角色权限
     const role = getRole()
