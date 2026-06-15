@@ -7,14 +7,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class GatewayConfig {
-
-        @Bean
-        public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
-                return builder.routes()
-                                .route("user-service", r -> r.path("/api/user/**")
-                                                .uri("http://localhost:8081"))
-                                .route("studysys", r -> r.path("/api/**")
-                                                .uri("http://localhost:8080"))
-                                .build();
-        }
+    @Bean
+    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+        return builder.routes()
+                .route("user-service", r -> r.path("/api/user/**")
+                        .uri("lb://user-service"))
+                .route("studysys", r -> r.path("/api/**")
+                        .uri("lb://studysys"))
+                .build();
+    }
 }

@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        username: nacos
+        password: nacos
+        ip: 127.0.0.1
+
+server:
+  port: 8082
+
+jwt:
+  secret: hddhddhddhddhddhddhddhddhddhddhdd
+  expiration: 86400000

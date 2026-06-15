@@ -43,8 +43,18 @@ const PUBLIC_PATHS = ['/login', '/register']
 
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token')
-    // 公开页面（登录、注册）→ 直接放行
+
+    // 已登录用户访问登录/注册页 → 跳转到对应首页
+    if (token && PUBLIC_PATHS.includes(to.path)) {
+        const role = getRole()
+        if (role === 'student') return next('/courses')
+        if (role === 'teacher') return next('/course-list')
+        return next('/departments')  // admin
+    }
+
+    // 未登录访问公开页面 → 放行
     if (PUBLIC_PATHS.includes(to.path)) return next()
+
     // 未登录 → 登录页
     if (!token) return next('/login')
 
@@ -52,7 +62,6 @@ router.beforeEach((to, from, next) => {
     const role = getRole()
     const allowed = to.meta.roles
     if (allowed && !allowed.includes(role)) {
-        // 没有权限 → 重定向到有权限的首页
         if (role === 'student') return next('/courses')
         if (role === 'teacher') return next('/course-list')
         return next('/departments')

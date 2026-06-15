@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,51 +23,58 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     private EnrollmentMapper enrollmentMapper;
     @Autowired
     private CourseScheduleMapper courseScheduleMapper;
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Override
     @Transactional
     public Map<String, Object> enroll(Integer studentId, Integer scheduleId) {
-        Map<String, Object> result = new HashMap<>();
+        RLock lock = redissonClient.getLock("enroll:" + scheduleId);
+        lock.lock();
+        try {
+            Map<String, Object> result = new HashMap<>();
+            CourseSchedule schedule = courseScheduleMapper.selectById(scheduleId);
+            if (schedule == null) {
+                result.put("success", false);
+                result.put("message", "课程安排不存在");
+                return result;
+            }
 
-        CourseSchedule schedule = courseScheduleMapper.selectByIdForUpdate(scheduleId);
-        if (schedule == null) {
-            result.put("success", false);
-            result.put("message", "课程安排不存在");
+            Enrollment existing = enrollmentMapper.selectByStudentAndSchedule(studentId, scheduleId);
+            if (existing != null && "ENROLLED".equals(existing.getStatus())) {
+                result.put("success", false);
+                result.put("message", "已选过此课程，请勿重复选课");
+                return result;
+            }
+
+            if (schedule.getEnrolledCount() >= schedule.getCapacity()) {
+                result.put("success", false);
+                result.put("message", "该课程已满员");
+                return result;
+            }
+
+            List<EnrollmentDTO> conflicts = enrollmentMapper.selectTimeConflict(
+                    studentId, schedule.getDayOfWeek(),
+                    schedule.getStartPeriod(), schedule.getEndPeriod());
+            if (!conflicts.isEmpty()) {
+                result.put("success", false);
+                result.put("message", "选课时间与「" + conflicts.get(0).getCourseName() + "」冲突");
+                return result;
+            }
+
+            Enrollment enrollment = new Enrollment();
+            enrollment.setScheduleId(scheduleId);
+            enrollment.setStudentId(studentId);
+            enrollment.setStatus("ENROLLED");
+            enrollmentMapper.insert(enrollment);
+            courseScheduleMapper.updateEnrolledCount(scheduleId, 1);
+
+            result.put("success", true);
+            result.put("message", "选课成功");
             return result;
+        } finally {
+            lock.unlock();
         }
-
-        Enrollment existing = enrollmentMapper.selectByStudentAndSchedule(studentId, scheduleId);
-        if (existing != null && "ENROLLED".equals(existing.getStatus())) {
-            result.put("success", false);
-            result.put("message", "已选过此课程，请勿重复选课");
-            return result;
-        }
-
-        if (schedule.getEnrolledCount() >= schedule.getCapacity()) {
-            result.put("success", false);
-            result.put("message", "该课程已满员");
-            return result;
-        }
-
-        List<EnrollmentDTO> conflicts = enrollmentMapper.selectTimeConflict(
-                studentId, schedule.getDayOfWeek(),
-                schedule.getStartPeriod(), schedule.getEndPeriod());
-        if (!conflicts.isEmpty()) {
-            result.put("success", false);
-            result.put("message", "选课时间与「" + conflicts.get(0).getCourseName() + "」冲突");
-            return result;
-        }
-
-        Enrollment enrollment = new Enrollment();
-        enrollment.setScheduleId(scheduleId);
-        enrollment.setStudentId(studentId);
-        enrollment.setStatus("ENROLLED");
-        enrollmentMapper.insert(enrollment);
-        courseScheduleMapper.updateEnrolledCount(scheduleId, 1);
-
-        result.put("success", true);
-        result.put("message", "选课成功");
-        return result;
     }
 
     @Override

@@ -8,8 +8,6 @@ public interface CourseScheduleMapper {
     List<CourseSchedule> selectAll();
 
     CourseSchedule selectById(Integer scheduleId);
-
-    CourseSchedule selectByIdForUpdate(Integer scheduleId);
     
     int insert(CourseSchedule courseSchedule);
 

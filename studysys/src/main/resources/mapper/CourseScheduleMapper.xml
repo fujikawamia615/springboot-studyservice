@@ -5,8 +5,6 @@
         t_course_schedule </select>
     <select id="selectById" resultType="com.hdd.studysys.entity.CourseSchedule"> SELECT * FROM
         t_course_schedule WHERE schedule_id = #{scheduleId} </select>
-    <select id="selectByIdForUpdate" resultType="com.hdd.studysys.entity.CourseSchedule"> SELECT *
-    FROM t_course_schedule WHERE schedule_id = #{scheduleId} FOR UPDATE </select>
     <insert id="insert" parameterType="com.hdd.studysys.entity.CourseSchedule"> INSERT INTO t_course_schedule(course_id,
         teacher_id, day_of_week, start_period, end_period, capacity, enrolled_count)
         VALUES(#{courseId}, #{teacherId}, #{dayOfWeek}, #{startPeriod}, #{endPeriod}, #{capacity},
