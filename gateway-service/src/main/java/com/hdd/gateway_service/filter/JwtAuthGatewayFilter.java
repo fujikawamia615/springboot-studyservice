@@ -79,6 +79,8 @@ public class JwtAuthGatewayFilter implements GlobalFilter, Ordered {
                     // 允许查看个人信息（服务层会校验是否自己）
                 } else if (path.startsWith("/api/grade/my") && "GET".equals(method)) {
                     // 允许查看自己的成绩
+                } else if (path.equals("/api/enrollment/enroll-direct") && "POST".equals(method)) {
+                    // 允许直接选课（测试用）
                 } else {
                     // 未明确允许的接口全部禁止
                     exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);

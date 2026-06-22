@@ -3,10 +3,6 @@ package com.hdd.studysys.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import com.hdd.studysys.dto.StudentWithDeptDTO;
@@ -25,7 +21,6 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    @Cacheable(value = "students", key = "#studentId", unless = "#result == null")
     public Student selectById(Integer studentId) {
         return studentMapper.selectById(studentId);
     }
@@ -36,20 +31,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    @Caching(put = {
-            @CachePut(value = "students", key = "#student.studentId")
-    }, evict = {
-            @CacheEvict(value = "studentsWithDept", key = "#student.studentId")
-    })
     public int update(Student student) {
         return studentMapper.update(student);
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "students", key = "#studentId"),
-            @CacheEvict(value = "studentsWithDept", key = "#studentId")
-    })
     public int deleteById(Integer studentId) {
         return studentMapper.deleteById(studentId);
     }
@@ -60,7 +46,6 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    @Cacheable(value = "studentsWithDept", key = "#studentId", unless = "#result == null")
     public StudentWithDeptDTO selectByIdWithDept(Integer studentId) {
         return studentMapper.selectByIdWithDept(studentId);
     }

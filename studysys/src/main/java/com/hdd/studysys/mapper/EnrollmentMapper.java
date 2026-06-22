@@ -3,7 +3,7 @@ package com.hdd.studysys.mapper;
 import java.util.List;
 import com.hdd.studysys.entity.Enrollment;
 import com.hdd.studysys.dto.EnrollmentDTO;
-
+import org.apache.ibatis.annotations.Param;
 public interface EnrollmentMapper {
     int insert(Enrollment enrollment);
 
@@ -19,4 +19,7 @@ public interface EnrollmentMapper {
             Integer startPeriod, Integer endPeriod);
 
     int updateStatus(Integer enrollmentId, String status);
+    
+    int updateStatusByStudentAndSchedule(@Param("studentId") Integer studentId,
+            @Param("scheduleId") Integer scheduleId, @Param("status") String status);
 }

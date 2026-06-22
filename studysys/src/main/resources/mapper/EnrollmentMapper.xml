@@ -8,9 +8,10 @@
     <select id="selectById" resultType="com.hdd.studysys.entity.Enrollment"> SELECT * FROM
         t_enrollment WHERE enrollment_id = #{enrollmentId} </select>
     <select id="selectByStudentAndSchedule" resultType="com.hdd.studysys.entity.Enrollment"> SELECT
-        * FROM t_enrollment WHERE student_id = #{studentId} AND schedule_id = #{scheduleId} </select>
+        * FROM t_enrollment WHERE student_id = #{studentId} AND schedule_id = #{scheduleId} AND
+        ROWNUM = 1</select>
     <select id="selectByStudentId" resultType="com.hdd.studysys.dto.EnrollmentDTO"> SELECT
-        e.enrollment_id, s.student_name, c.course_name, t.teacher_name, cs.day_of_week,
+        e.enrollment_id, e.schedule_id,s.student_name, c.course_name, t.teacher_name, cs.day_of_week,
         cs.start_period, cs.end_period, e.enroll_time, e.status FROM t_enrollment e JOIN t_student s
         ON e.student_id = s.student_id JOIN t_course_schedule cs ON e.schedule_id = cs.schedule_id
         JOIN t_course c ON cs.course_id = c.course_id JOIN t_teacher t ON cs.teacher_id =
@@ -28,4 +29,6 @@
         t_course_schedule cs ON e.schedule_id = cs.schedule_id JOIN t_course c ON cs.course_id =
         c.course_id WHERE e.student_id = #{studentId} AND e.status = 'ENROLLED' AND cs.day_of_week =
         #{dayOfWeek} AND cs.start_period &lt; #{endPeriod} AND cs.end_period &gt; #{startPeriod} </select>
+    <update id="updateStatusByStudentAndSchedule"> UPDATE t_enrollment SET status = #{status} WHERE
+    student_id = #{studentId} AND schedule_id = #{scheduleId} </update>
 </mapper>

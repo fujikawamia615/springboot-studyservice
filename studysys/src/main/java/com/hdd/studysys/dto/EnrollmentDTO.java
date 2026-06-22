@@ -13,7 +13,11 @@ public class EnrollmentDTO implements Serializable {
     private Integer endPeriod;
     private Date enrollTime;
     private String status;
+    private Integer scheduleId;
 
+    public Integer getScheduleId() {
+        return scheduleId;
+    }   
     public Integer getEnrollmentId() {
         return enrollmentId;
     }

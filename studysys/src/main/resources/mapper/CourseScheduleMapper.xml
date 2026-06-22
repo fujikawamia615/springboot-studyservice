@@ -16,6 +16,8 @@
     <delete id="deleteById"> DELETE FROM t_course_schedule WHERE schedule_id = #{scheduleId} </delete>
     <update id="updateEnrolledCount"> UPDATE t_course_schedule SET enrolled_count = enrolled_count +
         #{delta} WHERE schedule_id = #{scheduleId} </update>
+    <update id="setEnrolledCount"> UPDATE t_course_schedule SET enrolled_count = #{count} WHERE
+    schedule_id = #{scheduleId} </update>
     <resultMap id="CourseScheduleDTOResultMap" type="com.hdd.studysys.dto.CourseScheduleDTO">
         <result property="scheduleId" column="schedule_id" />
         <result property="courseId" column="course_id" />

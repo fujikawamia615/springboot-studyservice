@@ -5,10 +5,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-
 import com.hdd.studysys.mapper.DepartmentMapper;
 import com.hdd.studysys.service.DepartmentService;
 import com.hdd.studysys.entity.Department;
@@ -24,7 +20,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    @Cacheable(value = "departments", key = "#departmentId", unless = "#result == null")
     public Department selectById(Integer departmentId) {
         return departmentMapper.selectById(departmentId);
     }
@@ -40,13 +35,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    @CachePut(value = "departments", key = "#department.departmentId")
     public int update(Department department) {
         return departmentMapper.update(department);
     }
 
     @Override
-    @CacheEvict(value = "departments", key = "#departmentId")
     public int deleteById(Integer departmentId) {
         return departmentMapper.deleteById(departmentId);
     }

@@ -3,9 +3,6 @@ package com.hdd.studysys.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
@@ -27,7 +24,6 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    @Cacheable(value = "grades", key = "#gradeId", unless = "#result == null")
     public Grade selectById(Integer gradeId) {
         return gradeMapper.selectById(gradeId);
     }
@@ -38,13 +34,11 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    @CachePut(value = "grades", key = "#grade.gradeId")
     public int update(Grade grade) {
         return gradeMapper.update(grade);
     }
 
     @Override
-    @CacheEvict(value = "grades", key = "#gradeId")
     public int deleteById(Integer gradeId) {
         return gradeMapper.deleteById(gradeId);
     }

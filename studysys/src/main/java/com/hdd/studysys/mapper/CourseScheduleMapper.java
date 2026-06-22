@@ -16,8 +16,10 @@ public interface CourseScheduleMapper {
     int deleteById(Integer scheduleId);
 
     int updateEnrolledCount(Integer scheduleId, int delta);
-
+    
     List<CourseScheduleDTO> selectAllWithNames();
 
     List<CourseScheduleDTO> selectByTeacherId(Integer teacherId);
+
+    int setEnrolledCount(Integer scheduleId, Integer count);
 }
