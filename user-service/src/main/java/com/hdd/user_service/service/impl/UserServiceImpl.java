@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
             if (user.getReferenceId() == null) {
                 throw new RuntimeException("教师ID不能为空");
             }
-            String url = "http://localhost:8080/api/teacher/" + user.getReferenceId();
+            String url = "http://localhost:9090/api/teacher/" + user.getReferenceId();
             if (restTemplate.getForObject(url, Object.class) == null) {
                 throw new RuntimeException("教师ID不存在");
             }
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
             if (user.getReferenceId() == null) {
                 throw new RuntimeException("学生ID不能为空");
             }
-            String url = "http://localhost:8080/api/student/" + user.getReferenceId();
+            String url = "http://localhost:9090/api/student/" + user.getReferenceId();
             if (restTemplate.getForObject(url, Object.class) == null) {
                 throw new RuntimeException("学生ID不存在");
             }

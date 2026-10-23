@@ -27,7 +27,7 @@
     select * from t_student 
         <where>
             <if test="studentName != null and studentName != ''">
-                and student_name like '%' || #{studentName} || '%'
+                and student_name like CONCAT('%', #{studentName}, '%')
             </if>
             <if test="departmentId != null">
                 and department_id = #{departmentId}

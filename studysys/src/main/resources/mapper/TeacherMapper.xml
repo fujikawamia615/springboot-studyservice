@@ -12,8 +12,8 @@
         #{teacherId} </update>
     <delete id="deleteById" parameterType="int"> DELETE FROM t_teacher WHERE teacher_id = #{id} </delete>
     <select id="search" resultType="com.hdd.studysys.entity.Teacher"> select * from t_teacher <where>
-            <if test="teacherName != null and teacherName != ''"> and teacher_name like '%' ||
-        #{teacherName} || '%' </if>
+            <if test="teacherName != null and teacherName != ''"> and teacher_name like CONCAT('%',
+        #{teacherName}, '%') </if>
     <if test="departmentId != null"> and department_id =
         #{departmentId} </if>
         </where>

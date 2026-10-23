@@ -1,5 +1,6 @@
 package com.hdd.studysys.exception;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,17 +16,9 @@ public class GlobalExceptionHandler {
     public Map<String, Object> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         Map<String, Object> result = new HashMap<>();
         result.put("success", false);
-        String msg = e.getMessage();
-        if (msg != null) {
-            if (msg.contains("ORA-02292")) {
-                result.put("message", "删除失败：该记录被其他数据引用");
-            } else if (msg.contains("ORA-02291")) {
-                result.put("message", "操作失败：关联的数据不存在，请检查外键");
-            } else if (msg.contains("ORA-00001")) {
-                result.put("message", "操作失败：数据已存在");
-            } else {
-                result.put("message", "数据库操作失败");
-            }
+        Throwable cause = e.getMostSpecificCause();
+        if (cause instanceof SQLException sqlEx && sqlEx.getErrorCode() == 1062) {
+            result.put("message", "唯一键重复");
         } else {
             result.put("message", "数据库操作失败");
         }

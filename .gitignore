@@ -1,6 +1,5 @@
 HELP.md
 target/
-.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -10,9 +9,6 @@ target/
 
 ### HTTP 测试文件 ###
 **/test*.http
-
-### 配置文件（含密码，不上传） ###
-**/application.properties
 
 ### STS ###
 .apt_generated
@@ -38,3 +34,5 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
+
+

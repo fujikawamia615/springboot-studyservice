@@ -6,10 +6,10 @@
 
 ```
 D:\springboot\
-├── studysys/          # 业务服务 - 核心教务 CRUD + 选课管理 (port 8080)
-├── user-service/      # 认证服务 - JWT + Spring Security (port 8081)
-├── gateway-service/   # 网关服务 - 路由转发 + JWT 鉴权 + 角色权限 (port 8082)
-└── log-service/       # 日志服务 - Kafka 集中消费登录日志 (port 8083)
+├── studysys/          # 业务服务 - 核心教务 CRUD + 选课管理 (port 9090)
+├── user-service/      # 认证服务 - JWT + Spring Security (port 9091)
+├── gateway-service/   # 网关服务 - 路由转发 + JWT 鉴权 + 角色权限 (port 9095)
+└── log-service/       # 日志服务 - Kafka 集中消费登录日志 (port 9094)
 ```
 
 ## 技术栈
@@ -37,24 +37,24 @@ D:\springboot\
 # 编译所有模块
 cd D:\springboot
 
-# 启动业务服务 (8080)
+# 启动业务服务 (9090)
 cd studysys && mvn spring-boot:run
 
-# 启动日志服务 (8083)
+# 启动日志服务 (9094)
 cd ../log-service && mvn spring-boot:run
 
-# 启动认证服务 (8081)
+# 启动认证服务 (9091)
 cd ../user-service && mvn spring-boot:run
 
-# 启动网关服务 (8082)
+# 启动网关服务 (9095)
 cd ../gateway-service && mvn spring-boot:run
 ```
 
-统一入口：`http://localhost:8082/api/**`
+统一入口：`http://localhost:9095/api/**`
 
 ## 服务详情
 
-### 1. studysys -- 核心业务服务 (port 8080)
+### 1. studysys -- 核心业务服务 (port 9090)
 
 | 模块 | 实体 | 说明 |
 |------|------|------|
@@ -69,9 +69,9 @@ cd ../gateway-service && mvn spring-boot:run
 - MyBatis XML 动态 SQL
 - Redis 缓存（@Cacheable / @CachePut / @CacheEvict）
 - 全局异常处理，Oracle 错误码精准匹配
-- Swagger 接口文档：`http://localhost:8080/swagger-ui.html`
+- Swagger 接口文档：`http://localhost:9090/swagger-ui.html`
 
-### 2. user-service -- 认证服务 (port 8081)
+### 2. user-service -- 认证服务 (port 9091)
 
 | 功能 | 说明 |
 |------|------|
@@ -83,7 +83,7 @@ cd ../gateway-service && mvn spring-boot:run
 - 数据库唯一约束防止用户名和 referenceId 重复
 - 登录成功后发送 Kafka 消息到 login-events 主题
 
-### 3. gateway-service -- 网关服务 (port 8082)
+### 3. gateway-service -- 网关服务 (port 9095)
 
 | 功能 | 说明 |
 |------|------|
@@ -107,7 +107,7 @@ cd ../gateway-service && mvn spring-boot:run
 | 其他 API (GET) | ✅ | ✅ | ✅ |
 | 其他 API (POST/PUT/DELETE) | ✅ | ❌ | ❌ |
 
-### 4. log-service -- 日志服务 (port 8083)
+### 4. log-service -- 日志服务 (port 9094)
 
 | 功能 | 说明 |
 |------|------|
@@ -159,29 +159,29 @@ cd ../gateway-service && mvn spring-boot:run
 
 ```bash
 # 注册学生
-POST http://localhost:8082/api/user/register
+POST http://localhost:9095/api/user/register
 Content-Type: application/json
 
 {"username":"student1","password":"123456","role":"student","referenceId":1}
 
 # 注册教师
-POST http://localhost:8082/api/user/register
+POST http://localhost:9095/api/user/register
 Content-Type: application/json
 
 {"username":"teacher1","password":"123456","role":"teacher","referenceId":1}
 
 # 登录（获取 Token）
-POST http://localhost:8082/api/user/login
+POST http://localhost:9095/api/user/login
 Content-Type: application/json
 
 {"username":"student1","password":"123456"}
 
 # 携带 Token 查询课程
-GET http://localhost:8082/api/course
+GET http://localhost:9095/api/course
 Authorization: Bearer <token>
 
 # 学生选课
-POST http://localhost:8082/api/enrollment/enroll?studentId=1&scheduleId=1
+POST http://localhost:9095/api/enrollment/enroll?studentId=1&scheduleId=1
 Authorization: Bearer <token>
 ```
 
@@ -189,15 +189,15 @@ Authorization: Bearer <token>
 
 ```mermaid
 graph TD
-    Client[客户端] --> Gateway["Gateway :8082<br/>JWT鉴权 + 角色权限"]
-    Gateway --> Auth["user-service :8081<br/>注册/登录/JWT"]
-    Gateway --> Business["studysys :8080<br/>教务CRUD + 选课"]
+    Client[客户端] --> Gateway["Gateway :9095<br/>JWT鉴权 + 角色权限"]
+    Gateway --> Auth["user-service :9091<br/>注册/登录/JWT"]
+    Gateway --> Business["studysys :9090<br/>教务CRUD + 选课"]
     
     Auth --> Kafka[("Kafka")]
     Business --> Redis[("Redis")]
     Business --> Oracle[("Oracle 21c")]
     Auth --> Oracle
-    Kafka --> Log["log-service :8083<br/>登录日志消费"]
+    Kafka --> Log["log-service :9094<br/>登录日志消费"]
 ```
 
 ## 开发环境
@@ -208,3 +208,4 @@ graph TD
 - OS: Windows
 
 MIT License
+
