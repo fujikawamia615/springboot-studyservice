@@ -2,6 +2,7 @@
 -- 不使用外键，关联关系由应用层保证；关联列单独建索引
 USE studysys;
 
+DROP TABLE IF EXISTS t_notification;
 DROP TABLE IF EXISTS t_user;
 DROP TABLE IF EXISTS t_grade;
 DROP TABLE IF EXISTS t_enrollment;
@@ -77,4 +78,15 @@ CREATE TABLE t_user (
     reference_id INT,
     CONSTRAINT uk_user_username UNIQUE (username),
     CONSTRAINT uk_user_role_ref UNIQUE (role, reference_id)
+);
+
+-- 选课结果通知：Kafka 消费者处理完选课后写入，学生端查询未读并标记已读
+create table t_notification (
+    note_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id      INT not null ,
+    user_type varchar(50) not null,
+    note varchar(255) not null,
+    read_status tinyint not null default 0,
+    create_time DATETIME NOT NULL,
+    index  idx_note_type_id_status (user_type, user_id, read_status)
 );

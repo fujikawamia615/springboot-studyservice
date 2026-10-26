@@ -22,6 +22,7 @@ import com.hdd.studysys.service.impl.CourseScheduleCacheService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.RequestHeader;
+
 @RestController
 @RequestMapping("/api/enrollment")
 public class EnrollmentController {
@@ -30,39 +31,41 @@ public class EnrollmentController {
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
     @Autowired
-private CourseScheduleCacheService cacheService;
-    @PostMapping("/enroll")
-@SentinelResource(value = "enroll", blockHandler = "enrollBlock")
-public Map<String, Object> enroll(
-        @RequestHeader("referenceId") Integer studentId,
-        @RequestParam Integer scheduleId) {
-    // --- 快速预检（Redis，不落库）---
-    String status = cacheService.getEnrollStatus(studentId, scheduleId);
-    if ("ENROLLED".equals(status))
-        return Map.of("success", false, "message", "已选过此课程，请勿重复选课");
-    
-    CourseSchedule schedule = cacheService.getSchedule(scheduleId);
-    if (schedule == null)
-        return Map.of("success", false, "message", "课程安排不存在");
-    
-    if (cacheService.checkTimeConflict(studentId, schedule.getDayOfWeek(),
-            schedule.getStartPeriod(), schedule.getEndPeriod()))
-        return Map.of("success", false, "message", "选课时间冲突");
-    // --- 预检结束 ---
+    private CourseScheduleCacheService cacheService;
 
-    EnrollRequest req = new EnrollRequest();
-    req.setStudentId(studentId);
-    req.setScheduleId(scheduleId);
-    kafkaTemplate.send("enroll-topic", req);
-    return Map.of("success", true, "message", "选课请求已提交");
-}
-    
+    @PostMapping("/enroll")
+    @SentinelResource(value = "enroll", blockHandler = "enrollBlock")
+    public Map<String, Object> enroll(
+            @RequestHeader("referenceId") Integer studentId,
+            @RequestParam Integer scheduleId) {
+        // --- 快速预检（Redis，不落库）---
+        String status = cacheService.getEnrollStatus(studentId, scheduleId);
+        if ("ENROLLED".equals(status))
+            return Map.of("success", false, "message", "已选过此课程，请勿重复选课");
+
+        CourseSchedule schedule = cacheService.getSchedule(scheduleId);
+        if (schedule == null)
+            return Map.of("success", false, "message", "课程安排不存在");
+
+        if (cacheService.checkTimeConflict(studentId, schedule.getDayOfWeek(),
+                schedule.getStartPeriod(), schedule.getEndPeriod()))
+            return Map.of("success", false, "message", "选课时间冲突");
+        // --- 预检结束 ---
+
+        EnrollRequest req = new EnrollRequest();
+        req.setStudentId(studentId);
+        req.setScheduleId(scheduleId);
+        kafkaTemplate.send("enroll-topic", req);
+        return Map.of("success", true, "message", "选课请求已提交");
+    }
+
     public Map<String, Object> enrollBlock(
             @RequestHeader("referenceId") Integer studentId,
             @RequestParam Integer scheduleId,
             BlockException e) {
         return Map.of("success", false, "message", "系统繁忙，请稍后重试");
     }
+
     @PostMapping("/drop")
     public Map<String, Object> drop(@RequestParam Integer enrollmentId) {
         kafkaTemplate.send("drop-topic", enrollmentId);
@@ -77,11 +80,11 @@ public Map<String, Object> enroll(
 
     @GetMapping("/schedule/{scheduleId}")
     public List<EnrollmentDTO> scheduleEnrollments(@PathVariable Integer scheduleId,
-            @RequestHeader(value = "role", required = false) String role,
-            @RequestHeader(value = "referenceId", required = false) Integer referenceId) {
+                                                   @RequestHeader(value = "role", required = false) String role,
+                                                   @RequestHeader(value = "referenceId", required = false) Integer referenceId) {
         return enrollmentService.scheduleEnrollmentsWithCheck(scheduleId, role, referenceId);
     }
-    
+
     @PostMapping("/enroll-direct")
     public Map<String, Object> enrollDirect(
             @RequestHeader("referenceId") Integer studentId,

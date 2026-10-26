@@ -81,6 +81,8 @@ public class JwtAuthGatewayFilter implements GlobalFilter, Ordered {
                     // 允许查看自己的成绩
                 } else if (path.equals("/api/enrollment/enroll-direct") && "POST".equals(method)) {
                     // 允许直接选课（测试用）
+                } else if (path.startsWith("/api/notification") && ("GET".equals(method) || "PUT".equals(method))) {
+                    // 允许查看和标记自己的通知（服务层按 role + referenceId 过滤）
                 } else {
                     // 未明确允许的接口全部禁止
                     exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
@@ -98,6 +100,8 @@ public class JwtAuthGatewayFilter implements GlobalFilter, Ordered {
                     // 允许查询成绩
                 } else if (path.startsWith("/api/grade")) {
                     // 允许教师增删改成绩
+                } else if (path.startsWith("/api/notification") && ("GET".equals(method) || "PUT".equals(method))) {
+                    // 允许查看和标记自己的通知（服务层按 role + referenceId 过滤）
                 } else{
                     // 未明确允许的接口全部禁止
                     exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
